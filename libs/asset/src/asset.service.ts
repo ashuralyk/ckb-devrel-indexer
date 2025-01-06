@@ -8,7 +8,7 @@ import { UdtInfo } from "@app/schemas";
 import { ccc } from "@ckb-ccc/core";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import axios, { Axios } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { UdtInfoRepo } from "./repos";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class AssetService {
   private readonly client: ccc.Client;
   private readonly rgbppBtcCodeHash: ccc.Hex;
   private readonly rgbppBtcHashType: ccc.HashType;
-  private readonly btcRequester: Axios;
+  private readonly btcRequester: AxiosInstance;
 
   constructor(
     private readonly configService: ConfigService,
@@ -55,14 +55,14 @@ export class AssetService {
       outIndex: number;
     };
   }> {
-    return await parseAddress(scriptLike, {
+    return await parseAddress(scriptLike, this.client, {
       btcRequester: this.btcRequester,
       rgbppBtcCodeHash: this.rgbppBtcCodeHash,
       rgbppBtcHashType: this.rgbppBtcHashType,
     });
   }
 
-  async getTransactionByTxHash(txHash: string): Promise<
+  async getTransactionWithBlockByTxHash(txHash: string): Promise<
     | {
         tx: ccc.Transaction;
         blockHash?: ccc.Hex;
@@ -164,7 +164,7 @@ export class AssetService {
     if (mode !== ScriptMode.Xudt) {
       return;
     }
-    const tokenHash = ccc.hashCkb(cell.cellOutput.type.toBytes());
+    const tokenHash = cell.cellOutput.type.hash();
     const udtInfo = await this.udtInfoRepo.findOneBy({ hash: tokenHash });
     if (udtInfo) {
       return udtInfo;

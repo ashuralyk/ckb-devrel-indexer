@@ -10,7 +10,7 @@ mysql:
 sync:
   interval: 10000
   blockLimitPerInterval: 20
-  blockSyncStart: 15742000
+  blockSyncStart: 10228288
 
   clearInterval: 120000
   confirmations: 100
@@ -35,3 +35,4 @@ sync:
   isMainnet: false
   ckbRpcUri: wss://testnet.ckb.dev/ws
   btcRpcUri: https://rpc.ankr.com/btc_signet
+  decoderServerUri: http://localhost:3000
